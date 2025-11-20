@@ -2,6 +2,7 @@ package com.example.deptosecure
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -53,12 +54,14 @@ class Registro : AppCompatActivity() {
 
         queue = Volley.newRequestQueue(this)
 
-        // 👉 Botón registrar
+        // 👉 Botón registrar con validación simplificada
         btnRegistrar.setOnClickListener {
-            registrarUsuario()
+            if (validarCampos()) {
+                registrarUsuario()
+            }
         }
 
-        // 👉 Texto "¿Ya tienes cuenta? Inicia sesión"
+        // 👉 Texto ir al login
         txtLogin2.setOnClickListener {
             irAlLogin()
         }
@@ -67,11 +70,11 @@ class Registro : AppCompatActivity() {
     private fun irAlLogin() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
-        finish() // Cierra Registro para que no se acumule en la pila
+        finish()
     }
 
-    private fun registrarUsuario() {
-
+    // ⭐ VALIDACIONES (SIN RUT ESTRICTO) ⭐
+    private fun validarCampos(): Boolean {
         val sRut = rut.text.toString().trim()
         val sNombre = nombre.text.toString().trim()
         val sCorreo = correo.text.toString().trim()
@@ -79,51 +82,103 @@ class Registro : AppCompatActivity() {
         val sClave = clave.text.toString().trim()
         val sConfirm = confirmClave.text.toString().trim()
 
-        // Validaciones básicas
-        if (sRut.isEmpty() || sNombre.isEmpty() || sCorreo.isEmpty() || sClave.isEmpty()) {
-            Toast.makeText(this, "Complete todos los campos", Toast.LENGTH_SHORT).show()
-            return
+        // 1. Validar Nombre (Solo letras)
+        if (sNombre.isEmpty()) {
+            nombre.error = "El nombre es obligatorio"
+            return false
+        }
+        if (!sNombre.matches(Regex("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$"))) {
+            nombre.error = "El nombre solo puede tener letras"
+            return false
         }
 
-        if (sClave != sConfirm) {
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_LONG).show()
-            return
+        // 2. Validar RUT (SOLO QUE NO ESTÉ VACÍO)
+        // Quitamos la validación matemática estricta para probar
+        if (sRut.isEmpty()) {
+            rut.error = "El RUT es obligatorio"
+            return false
         }
+
+        // 3. Validar Correo (Gmail)
+        if (sCorreo.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(sCorreo).matches()) {
+            correo.error = "Correo inválido"
+            return false
+        }
+        if (!sCorreo.endsWith("@gmail.com")) {
+            correo.error = "Solo se permite @gmail.com"
+            return false
+        }
+
+        // 4. Validar Teléfono (9 dígitos)
+        if (sTelefono.isEmpty() || !sTelefono.matches(Regex("^9[0-9]{8}$"))) {
+            telefono.error = "Teléfono inválido (Ej: 912345678)"
+            return false
+        }
+
+        // 5. Validar Contraseña
+        if (sClave.isEmpty() || sClave.length < 4) {
+            clave.error = "Mínimo 4 caracteres"
+            return false
+        }
+        if (sClave != sConfirm) {
+            confirmClave.error = "Las contraseñas no coinciden"
+            return false
+        }
+
+        return true
+    }
+
+    private fun registrarUsuario() {
+        val sRut = rut.text.toString().trim()
+        val sNombre = nombre.text.toString().trim()
+        val sCorreo = correo.text.toString().trim()
+        val sTelefono = telefono.text.toString().trim()
+        val sClave = clave.text.toString().trim()
+
+        // Limpiamos puntos y guiones por seguridad, pero aceptamos cualquier RUT
+        val rutLimpio = sRut.replace(".", "").replace("-", "")
 
         val url = "http://3.208.190.223/registro.php"
 
         val json = JSONObject().apply {
-            put("rut", sRut)
+            put("rut", rutLimpio)
             put("nombre", sNombre)
             put("email", sCorreo)
             put("telefono", sTelefono)
-            put("password", sClave) // Se envía plana, el PHP la hashea
+            put("password", sClave)
         }
 
         val request = JsonObjectRequest(
             Request.Method.POST, url, json,
             { response ->
                 try {
-                    // ⭐ CORRECCIÓN AQUÍ: Usamos 'estado' y 'msg'
-                    // optString es más seguro porque no crashea si el campo no existe
+                    // Leemos respuesta flexible (estado string o int)
                     val estado = response.optString("estado")
-                    val message = response.optString("msg")
+                    val message = response.optString("msg", "Sin mensaje")
 
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
-                    // Verificamos si el estado es "1" (Exitoso)
                     if (estado == "1") {
-                        // Redirigir al Login (MainActivity)
                         irAlLogin()
                     }
 
                 } catch (e: JSONException) {
                     e.printStackTrace()
-                    Toast.makeText(this, "Error procesando respuesta", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Error al leer respuesta", Toast.LENGTH_SHORT).show()
                 }
             },
             { error ->
-                Toast.makeText(this, "Error de conexión: ${error.localizedMessage}", Toast.LENGTH_LONG).show()
+                // Diagnóstico de error detallado
+                val response = error.networkResponse
+                if (error is com.android.volley.ParseError) {
+                    Toast.makeText(this, "Error de Formato (PHP devolvió HTML o basura)", Toast.LENGTH_LONG).show()
+                } else if (response != null && response.data != null) {
+                    val errorString = String(response.data)
+                    Toast.makeText(this, "Error Servidor (${response.statusCode}): $errorString", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(this, "Error conexión: ${error.message}", Toast.LENGTH_LONG).show()
+                }
+                error.printStackTrace()
             }
         )
 
