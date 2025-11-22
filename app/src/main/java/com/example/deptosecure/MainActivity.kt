@@ -14,11 +14,10 @@ import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
-import org.json.JSONObject // <-- Importante agregar esta librería
+import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
 
-    // Declaración de variables
     private lateinit var usu: EditText
     private lateinit var clave: EditText
     private lateinit var btn: Button
@@ -35,22 +34,18 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // Vinculamos las vistas
         usu = findViewById(R.id.usuario)
         clave = findViewById(R.id.clave)
         btn = findViewById(R.id.btningresar)
         val btnIrRegistro = findViewById<Button>(R.id.btnIrRegistro)
 
-        // Inicializamos Volley
         datos = Volley.newRequestQueue(this)
 
-        // Botón para ir al registro
         btnIrRegistro.setOnClickListener {
             val intent = Intent(this, Registro::class.java)
             startActivity(intent)
         }
 
-        // Botón de Login
         btn.setOnClickListener {
             val sUsu = usu.text.toString().trim()
             val sPass = clave.text.toString().trim()
@@ -63,12 +58,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ⭐ FUNCIÓN CORREGIDA ⭐
     private fun consultarDatos(usuario: String, pass: String) {
-        // 1. URL limpia (sin parámetros ?usu=...)
         val url = "http://3.208.190.223/apiconsultausu.php"
 
-        // 2. Crear el JSON Body
+        // 1. Creamos el objeto JSON para enviar los datos
         val jsonParams = JSONObject()
         try {
             jsonParams.put("usu", usuario)
@@ -77,31 +70,27 @@ class MainActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
-        // 3. Cambiar a POST y enviar jsonParams
+        // 2. Usamos JsonObjectRequest para enviar y recibir JSON
         val request = JsonObjectRequest(
-            Request.Method.POST, // <-- CAMBIO IMPORTANTE: POST
+            Request.Method.POST,
             url,
-            jsonParams,
-            { response ->
-                try {
-                    // Leemos la respuesta del PHP (que debe devolver "estado" y "msg")
-                    val estado = response.optString("estado")
-                    val mensaje = response.optString("msg") // Mensaje del PHP
+            jsonParams, // Enviamos el JSON que creamos
+            { response -> // La respuesta ya es un objeto JSON, no hay que convertirla
+                val estado = response.optString("estado")
+                val mensaje = response.optString("msg")
 
-                    if (estado == "1") {
-                        // Login Exitoso
-                        Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, Principal::class.java)
-                        startActivity(intent)
-                        finish() // Cierra el login para que no vuelvan atrás
-                    } else {
-                        // Error (clave mal, usuario no existe, etc.)
-                        Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
-                    }
+                if (estado == "1") {
+                    Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show()
 
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    Toast.makeText(this, "Error al procesar respuesta", Toast.LENGTH_SHORT).show()
+                    val rolUsuario = response.optString("rol", "OPERADOR")
+
+                    val intent = Intent(this, Principal::class.java)
+                    intent.putExtra("ROL_USUARIO", rolUsuario)
+
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, mensaje, Toast.LENGTH_LONG).show()
                 }
             },
             { error ->
