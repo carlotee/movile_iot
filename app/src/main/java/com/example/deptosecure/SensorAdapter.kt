@@ -18,6 +18,9 @@ class SensorAdapter(
         val codigo: TextView = view.findViewById(R.id.txtCodigo)
         val tipo: TextView = view.findViewById(R.id.txtTipo)
         val estado: TextView = view.findViewById(R.id.txtEstado)
+        // ⭐ NUEVO: Vinculamos el texto del usuario
+        val usuario: TextView = view.findViewById(R.id.txtUsuarioAsignado)
+
         val btnEstado: Button = view.findViewById(R.id.btnCambiarEstado)
         val btnEliminar: Button = view.findViewById(R.id.btnEliminar)
     }
@@ -30,9 +33,18 @@ class SensorAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = lista[position]
+
         holder.codigo.text = "MAC: ${item.codigo}"
         holder.tipo.text = "Tipo: ${item.tipo}"
         holder.estado.text = "Estado: ${item.estado}"
+
+        // ⭐ NUEVO: Mostrar a quién está asignado
+        // Verificamos si tiene un nombre válido para mostrarlo
+        if (item.usuario != "null" && item.usuario != "Sin Asignar" && item.usuario.isNotEmpty()) {
+            holder.usuario.text = "Asignado a: ${item.usuario}"
+        } else {
+            holder.usuario.text = "Sin Asignar"
+        }
 
         // Color según estado
         if (item.estado == "ACTIVO") {

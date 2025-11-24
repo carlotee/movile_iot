@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
@@ -17,7 +19,7 @@
             android:id="@+id/txtCodigo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="MAC: XX:XX:XX:XX"
+            tools:text="MAC: 1A2B3C4D"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -25,14 +27,24 @@
             android:id="@+id/txtTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tipo: Tarjeta"
+            tools:text="Tipo: Tarjeta"
             android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/txtUsuarioAsignado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Asignado a: Juan Perez"
+            android:textStyle="italic"
+            android:textColor="#555555"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/txtEstado"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Estado: ACTIVO"
+            tools:text="Estado: ACTIVO"
             android:textColor="#4CAF50"
             android:textSize="14sp"
             android:layout_marginBottom="8dp"/>
