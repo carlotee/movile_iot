@@ -84,8 +84,14 @@ class MainActivity : AppCompatActivity() {
 
                     val rolUsuario = response.optString("rol", "OPERADOR")
 
+                    // ⭐ CAMBIO 1: Leer el ID del usuario que viene del PHP ⭐
+                    val idUsuario = response.optString("id_usuario", "0")
+
                     val intent = Intent(this, Principal::class.java)
                     intent.putExtra("ROL_USUARIO", rolUsuario)
+
+                    // ⭐ CAMBIO 2: Pasar ese ID a la pantalla Principal ⭐
+                    intent.putExtra("ID_USUARIO", idUsuario)
 
                     startActivity(intent)
                     finish()
