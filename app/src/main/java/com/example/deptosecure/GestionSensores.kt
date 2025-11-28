@@ -74,7 +74,18 @@ class GestionSensores : AppCompatActivity() {
                     val jsonArray = JSONArray(response)
                     for (i in 0 until jsonArray.length()) {
                         val obj = jsonArray.getJSONObject(i)
-                        listaUsuarios.add(Usuario(obj.getString("id"), obj.getString("nombre")))
+
+                        // ⭐ CORRECCIÓN AQUÍ: Rellenar los parámetros faltantes ⭐
+                        // El constructor de Usuario ahora pide 6 datos.
+                        // Pasamos strings vacíos a los que no usamos en el spinner.
+                        listaUsuarios.add(Usuario(
+                            id = obj.getString("id"),
+                            nombre = obj.getString("nombre"),
+                            rut = "",       // Valor por defecto
+                            email = "",     // Valor por defecto
+                            telefono = "",  // Valor por defecto
+                            rol = ""        // Valor por defecto
+                        ))
                     }
 
                     val adapterSpinner = ArrayAdapter(this, android.R.layout.simple_spinner_item, listaUsuarios)
@@ -105,7 +116,6 @@ class GestionSensores : AppCompatActivity() {
                     for (i in 0 until jsonArray.length()) {
                         val obj = jsonArray.getJSONObject(i)
 
-                        // ⭐ CORRECCIÓN APLICADA: Leemos el usuario del JSON
                         val nombreUsuario = obj.optString("usuario", "Sin Asignar")
 
                         val sensor = Sensor(
@@ -113,7 +123,7 @@ class GestionSensores : AppCompatActivity() {
                             obj.getString("codigo"),
                             obj.getString("tipo"),
                             obj.getString("estado"),
-                            nombreUsuario // ⭐ Pasamos el 5to parámetro necesario
+                            nombreUsuario
                         )
                         listaSensores.add(sensor)
                     }

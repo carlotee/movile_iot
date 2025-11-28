@@ -20,9 +20,13 @@ import org.json.JSONObject
 
 class Principal : AppCompatActivity() {
 
+    // UI Components
     private lateinit var txtEstado: TextView
     private lateinit var btnAbrir: Button
+
+    // Variable para guardar el ID del usuario
     private var idUsuarioLogueado: String = "0"
+
     private val URL_API = "http://3.208.190.223/control_barrera.php"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,44 +40,49 @@ class Principal : AppCompatActivity() {
             insets
         }
 
-        // Vincular vistas
+        // 1. Vincular vistas
         val btnGestionSensores = findViewById<Button>(R.id.btngs1)
         val btnHistorial = findViewById<Button>(R.id.btnVerHistorial)
-        val btnCrearUsuario = findViewById<Button>(R.id.btnCrearUsuario)
+
+        // Corregido: Variable con nombre coherente al ID
+        val btnGestionarUsuarios = findViewById<Button>(R.id.btnGestionarUsuarios)
 
         txtEstado = findViewById(R.id.txtEstadoBarrera)
         btnAbrir = findViewById(R.id.btnAbrirBarrera)
 
-        // Recuperar datos
+        // ⭐ 2. RECUPERAR DATOS DEL LOGIN (ROL Y ID) ⭐
         val rol = intent.getStringExtra("ROL_USUARIO") ?: "OPERADOR"
         idUsuarioLogueado = intent.getStringExtra("ID_USUARIO") ?: "0"
 
         // Configuración según ROL
         if (rol == "ADMIN") {
             btnGestionSensores.visibility = View.VISIBLE
-            btnCrearUsuario.visibility = View.VISIBLE
+            btnGestionarUsuarios.visibility = View.VISIBLE
 
             btnGestionSensores.setOnClickListener {
                 val intent = Intent(this, GestionSensores::class.java)
                 startActivity(intent)
             }
 
-            // ⭐ CORRECCIÓN AQUÍ: Apuntamos a la nueva actividad ⭐
-            btnCrearUsuario.setOnClickListener {
-                val intent = Intent(this, CrearUsuarioActivity::class.java)
+            // ⭐ ACCIÓN: Ir a la pantalla de Gestión de Usuarios
+            btnGestionarUsuarios.setOnClickListener {
+                val intent = Intent(this, GestionUsuariosActivity::class.java)
+                // IMPORTANTE: Pasamos tu ID para evitar que te auto-elimines
+                intent.putExtra("MI_ID", idUsuarioLogueado)
                 startActivity(intent)
             }
 
         } else {
             btnGestionSensores.visibility = View.GONE
-            btnCrearUsuario.visibility = View.GONE
+            btnGestionarUsuarios.visibility = View.GONE
         }
 
-        // Resto de botones
+        // 3. Lógica de Barrera (Solo Abrir)
         btnAbrir.setOnClickListener {
             enviarComandoBarrera("ABRIR")
         }
 
+        // 4. Navegación a Historial
         btnHistorial.setOnClickListener {
             val intent = Intent(this, HistorialActivity::class.java)
             startActivity(intent)
@@ -84,6 +93,8 @@ class Principal : AppCompatActivity() {
         val queue = Volley.newRequestQueue(this)
         val params = JSONObject()
         params.put("accion", accion)
+
+        // ⭐ ENVIAR EL ID DEL USUARIO AL SERVIDOR ⭐
         params.put("id_usuario", idUsuarioLogueado)
 
         val request = JsonObjectRequest(Request.Method.POST, URL_API, params,
@@ -93,6 +104,7 @@ class Principal : AppCompatActivity() {
                 actualizarUI(accion)
             },
             { error ->
+                // Diagnóstico de errores
                 val msg = when (error) {
                     is com.android.volley.TimeoutError -> "Tiempo de espera agotado..."
                     is com.android.volley.NoConnectionError -> "Sin conexión a internet"
@@ -116,16 +128,17 @@ class Principal : AppCompatActivity() {
     private fun actualizarUI(estado: String) {
         if (estado == "ABRIR") {
             txtEstado.text = "ABIERTA"
-            txtEstado.setTextColor(Color.parseColor("#4CAF50"))
+            txtEstado.setTextColor(Color.parseColor("#4CAF50")) // Verde
 
+            // Simulación visual del cierre automático a los 5s
             Handler(Looper.getMainLooper()).postDelayed({
                 txtEstado.text = "CERRADA"
-                txtEstado.setTextColor(Color.parseColor("#D32F2F"))
+                txtEstado.setTextColor(Color.parseColor("#D32F2F")) // Rojo
             }, 6000)
 
         } else {
             txtEstado.text = "CERRADA"
-            txtEstado.setTextColor(Color.parseColor("#D32F2F"))
+            txtEstado.setTextColor(Color.parseColor("#D32F2F")) // Rojo
         }
     }
 }

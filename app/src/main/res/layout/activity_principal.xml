@@ -5,39 +5,43 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@drawable/ftdpa2"
     tools:context=".Principal">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:contentDescription="Scroll del panel">
+        android:contentDescription="Scroll del panel"
+        android:background="#DDFFFFFF">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="40dp">
+            android:paddingBottom="40dp"
+            android:background="@android:color/transparent">
 
             <TextView
                 android:id="@+id/txtTituloPrincipal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:text="Panel de Control"
-                android:textColor="#333333"
-                android:textSize="28sp"
-                android:textStyle="bold"
+                android:layout_marginTop="50dp"
+                android:text="PANEL CENTRAL"
+                android:textColor="#1976D2"
+                android:textSize="32sp"
+                android:letterSpacing="0.05"
+                android:textStyle="normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardSensores"
+                android:id="@+id/cardBarrera"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="30dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
                 app:layout_constraintTop_toBottomOf="@id/txtTituloPrincipal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -47,40 +51,61 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@android:drawable/ic_menu_my_calendar"
-                        app:tint="#616161" />
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="Gestión de Sensores"
-                        android:textSize="18sp"
+                        android:layout_marginBottom="16dp"
+                        android:text="CONTROL DE BARRERA"
+                        android:textSize="22sp"
+                        android:textColor="#303F9F"
                         android:textStyle="bold" />
 
-                    <Button
-                        android:id="@+id/btngs1"
-                        android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:backgroundTint="#757575"
-                        android:text="Administrar Tarjetas/Llaveros" />
+                        android:layout_marginBottom="24dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ESTADO: "
+                            android:textSize="18sp"
+                            android:textStyle="italic" />
+
+                        <TextView
+                            android:id="@+id/txtEstadoBarrera"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CERRADA"
+                            android:textColor="#C62828"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnAbrirBarrera"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:minHeight="120dp"
+                        android:backgroundTint="#8BC34A"
+                        android:text="ABRIR ACCESO"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/cardBarrera"
+                android:id="@+id/cardSensores"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="6dp"
-                app:layout_constraintTop_toBottomOf="@id/cardSensores"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:layout_constraintTop_toBottomOf="@id/cardBarrera"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -89,72 +114,54 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
-                        android:text="Control de Barrera"
+                        android:layout_marginTop="0dp"
+                        android:text="GESTIÓN DE ACCESO"
                         android:textSize="20sp"
+                        android:textColor="#303F9F"
                         android:textStyle="bold" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Estado Actual: "
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/txtEstadoBarrera"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="CERRADA"
-                            android:textColor="#D32F2F"
-                            android:textSize="16sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
                     <Button
-                        android:id="@+id/btnAbrirBarrera"
+                        android:id="@+id/btngs1"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:backgroundTint="#4CAF50"
-                        android:text="ABRIR BARRERA"
-                        android:textSize="18sp" />
-
+                        android:layout_height="match_parent"
+                        android:minHeight="100dp"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="#00BCD4"
+                        android:text="ADMINISTRAR TARJETAS/LLAVEROS"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <Button
-                android:id="@+id/btnVerHistorial"
+                android:id="@+id/btnGestionarUsuarios"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:backgroundTint="#607D8B"
-                android:text="Ver Historial de Accesos"
+                android:minHeight="80dp"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="25dp" android:backgroundTint="#FFC107"
+                android:text="GESTIONAR USUARIOS Y ROLES"
+                android:textColor="#333333"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardBarrera" />
-
-            <Button
-                android:id="@+id/btnCrearUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:backgroundTint="#9C27B0"
-                android:text="Crear Nuevo Usuario"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnVerHistorial" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                app:layout_constraintTop_toBottomOf="@+id/cardSensores" /> <Button
+            android:id="@+id/btnVerHistorial"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="80dp"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#607D8B"
+            android:text="VER BITÁCORA DE ACCESOS"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnGestionarUsuarios" /> </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
